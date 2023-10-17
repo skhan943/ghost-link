@@ -9,7 +9,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/auth" element={<Auth />} />
+      <Route path="/auth/:mode" element={<Auth />} />
       <Route path="/compose" element={<Compose />} />
       <Route path="/messages" element={<Messages />} />
       <Route path="/self-destruct" element={<DeleteAccount />} />
