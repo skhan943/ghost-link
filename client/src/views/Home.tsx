@@ -7,7 +7,7 @@ const Home = () => {
     <>
       <body className="flex flex-col bg-[#282454] h-screen">
         <Header></Header>
-        <section className="flex h-screen max-w-7xl items-center self-center">
+        <section className="flex h-screen max-w-7xl items-center self-center px-10">
           <div className="text-center">
             <h1 className="mb-4 text-4xl font-bold tracking-tight leading-none text-white md:text-5xl lg:text-6xl">
               Private conversations that won't haunt you 👻
