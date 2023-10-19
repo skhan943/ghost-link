@@ -11,6 +11,16 @@ const Auth = () => {
     password: "",
   });
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setUserInput((prevState) => {
+      return {
+        ...prevState,
+        [e.target.name]: e.target.value,
+      };
+    });
+  };
+
   return (
     <body className="flex flex-col bg-[#282454] h-screen">
       <Header linkTo="/"></Header>
@@ -41,6 +51,8 @@ const Auth = () => {
                   name="username"
                   type="username"
                   autoComplete="username"
+                  value={userInput.username}
+                  onChange={handleChange}
                   required
                   className="bg-[#F5F5F5] p-5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
@@ -61,10 +73,20 @@ const Auth = () => {
                   type="password"
                   autoComplete="current-password"
                   required
+                  value={userInput.password}
+                  onChange={handleChange}
                   className="bg-[#F5F5F5] p-5 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
+
+            {mode == "register" ? (
+              <p className="text-center text-red-500">
+                NOTE: passwords can't be reset, write yours down
+              </p>
+            ) : (
+              <></>
+            )}
 
             <div>
               <button
