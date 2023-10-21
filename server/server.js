@@ -12,11 +12,11 @@ app.use(passport.initialize());
 app.use(express.json()); // Body parser for JSON
 app.use(express.urlencoded({ extended: true })); // Body parser for URL-encoded data
 
+// Configure CORS to allow requests from the same origin
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+
 // Configure routes
 app.use("/api", routes);
-
-// Configure CORS to allow requests from the same origin
-app.use(cors({ origin: "http://localhost:5173" }));
 
 // Self-signed HTTPS certificate ( because this is just a personal project :P )
 const options = {

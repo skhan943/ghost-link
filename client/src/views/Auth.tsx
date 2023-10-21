@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useParams, redirect } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Header from "../components/Header";
 import axios from "axios";
 
@@ -22,12 +22,21 @@ const Auth = () => {
     });
   };
 
-  const handleRegistration = async () => {
+  const handleAuthentication = async (e: any) => {
+    e.preventDefault();
     try {
       const response = await axios.post(
-        "https://localhost:8082/api/auth/register",
-        userInput
+        "https://localhost:443/api/auth/register",
+        userInput,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
       );
+
+      console.log(response);
 
       if (response.status === 200) {
         // Registration was successful
@@ -64,7 +73,11 @@ const Auth = () => {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="#" method="POST">
+          <form
+            className="space-y-6"
+            onSubmit={handleAuthentication}
+            method="POST"
+          >
             <div>
               <label
                 htmlFor="username"
@@ -119,7 +132,6 @@ const Auth = () => {
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-700 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                onClick={mode == "register" ? handleRegistration : handleLogin}
               >
                 {mode == "register" ? <p>Create account</p> : <p>Sign in</p>}
               </button>

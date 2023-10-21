@@ -26,21 +26,34 @@ passport.use(
         return done(null, false, { message: "Username already taken" });
       }
 
-      // Derive key pair from password
-      const salt = crypto.randomBytes(16); // Generate a random salt
-      const iterations = 10000;
-      const keyLength = 32;
-      const derivedKey = crypto
-        .pbkdf2Sync(password, salt, iterations, keyLength, "sha256")
-        .toString("hex");
+      // Generate a random salt
+      const salt = crypto.randomBytes(16);
+
+      // Use the KDF to derive the key pair
+      const keyMaterial = crypto.pbkdf2Sync(
+        password,
+        salt,
+        100000,
+        64,
+        "sha512"
+      );
+
+      // Separate the key material into the public and private key parts
+      const publicKey = keyMaterial.slice(0, 32);
+      const privateKey = keyMaterial.slice(32);
+
+      // Convert to base64 for easier storage
+      const saltBase64 = salt.toString("base64");
+      const publicKeyBase64 = publicKey.toString("base64");
+      const privateKeyBase64 = privateKey.toString("base64");
 
       // Salt + Hash password using bcrypt
       const hashedPassword = await bcrypt.hash(password, 10);
 
       // Insert new user into the database, store the derived key as the public key
       const newUser = await db.one(
-        "INSERT INTO users (username, password, public_key) VALUES ($1, $2, $3) RETURNING *",
-        [username, hashedPassword, derivedKey]
+        "INSERT INTO users (username, password, public_key, salt) VALUES ($1, $2, $3, $4) RETURNING *",
+        [username, hashedPassword, publicKeyBase64, saltBase64]
       );
 
       return done(null, newUser);
