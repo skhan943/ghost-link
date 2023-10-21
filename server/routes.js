@@ -17,7 +17,6 @@ passport.use(
   "local",
   new LocalStrategy(async (username, password, done) => {
     try {
-      console.log("hi");
       // Check if user exists in DB
       const user = await db.oneOrNone(
         "SELECT * FROM users WHERE username = $1",
@@ -69,7 +68,6 @@ passport.deserializeUser(async (id, done) => {
 // Desc: Register a new user
 // Access: Public
 router.post("/auth/register", (req, res, next) => {
-  console.log(req.body);
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       return res.status(500).json({ error: err.message });

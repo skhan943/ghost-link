@@ -131,3 +131,4 @@ dist
 
 server/cert.pem
 server/key.pem
+server/csr.pem
