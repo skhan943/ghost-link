@@ -42,7 +42,8 @@ const Auth = () => {
 
         if (response.status === 201) {
           // Registration was successful
-          console.log("User registered successfully");
+          alert("User registered successfully");
+          window.location.href = "/auth/login";
         }
       } catch (error: any) {
         // Handle any network or other errors
@@ -67,7 +68,8 @@ const Auth = () => {
 
         if (response.status === 200) {
           // Registration was successful
-          console.log("User signed in successfully");
+          alert("Signed in!");
+          window.location.href = "/messages";
         }
       } catch (error: any) {
         // Handle any network or other errors

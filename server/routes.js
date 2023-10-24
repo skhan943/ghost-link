@@ -63,41 +63,6 @@ const isAuthenticated = (req, res, next) => {
   res.status(401).json({ message: "Unauthorized" });
 };
 
-// Route: POST api/auth/login
-// Desc: Login as existing user
-// Access: Public
-router.post("/auth/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    if (!user) {
-      return res.status(401).json({ message: info.message });
-    }
-    req.logIn(user, (loginErr) => {
-      if (loginErr) {
-        return res.status(500).json({ error: loginErr.message });
-      }
-      return res.status(200).json({ message: "User logged in successfully" });
-    });
-  })(req, res, next);
-});
-
-// Route: POST api/auth/logout
-// Desc: Logout the current user
-// Access: Secure
-router.post("/auth/logout", isAuthenticated, (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      // Handle any errors that occur during logout
-      return res.status(500).json({ error: "Failed to log out" });
-    }
-
-    // Successful logout
-    return res.status(200).json({ message: "User logged out successfully" });
-  });
-});
-
 // Route: POST api/auth/register
 // Desc: Register a new user
 // Access: Public
@@ -145,5 +110,44 @@ router.post("/auth/register", async (req, res) => {
     return res.status(500).json({ error: "Registration failed." });
   }
 });
+
+// Route: POST api/auth/login
+// Desc: Login as existing user
+// Access: Public
+router.post("/auth/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+    if (!user) {
+      return res.status(401).json({ message: info.message });
+    }
+    req.logIn(user, (loginErr) => {
+      if (loginErr) {
+        return res.status(500).json({ error: loginErr.message });
+      }
+      return res.status(200).json({ message: "User logged in successfully" });
+    });
+  })(req, res, next);
+});
+
+// Route: POST api/auth/logout
+// Desc: Logout the current user
+// Access: Secure
+router.post("/auth/logout", isAuthenticated, (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      // Handle any errors that occur during logout
+      return res.status(500).json({ error: "Failed to log out" });
+    }
+
+    // Successful logout
+    return res.status(200).json({ message: "User logged out successfully" });
+  });
+});
+
+// Route: GET api/secure/user-info
+// Desc: GET the current user
+// Access: Secure
 
 module.exports = router;
