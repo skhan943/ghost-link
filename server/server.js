@@ -4,13 +4,24 @@ const fs = require("fs");
 const routes = require("./routes");
 const cors = require("cors");
 const passport = require("passport");
+const session = require("express-session");
 
 const app = express();
 
-app.use(passport.initialize());
+// Configure session for passport.js
+app.use(
+  session({
+    secret: "$3Cr3t_K3i",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
 app.use(express.json()); // Body parser for JSON
 app.use(express.urlencoded({ extended: true })); // Body parser for URL-encoded data
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Configure CORS to allow requests from the same origin
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
