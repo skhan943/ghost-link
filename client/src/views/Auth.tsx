@@ -12,6 +12,8 @@ const Auth = () => {
     password: "",
   });
 
+  const [errorMessage, setErrorMessage] = useState("");
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setUserInput((prevState) => {
@@ -24,6 +26,7 @@ const Auth = () => {
 
   const handleAuthentication = async (e: any) => {
     e.preventDefault();
+    setErrorMessage("");
     if (mode === "register") {
       try {
         const response = await axios.post(
@@ -44,7 +47,7 @@ const Auth = () => {
       } catch (error: any) {
         // Handle any network or other errors
         if (error.response) {
-          console.error("Error registering user:", error.response.data.message);
+          setErrorMessage(error.response.data.message);
         } else {
           console.error("Network error:", error.message);
         }
@@ -69,7 +72,7 @@ const Auth = () => {
       } catch (error: any) {
         // Handle any network or other errors
         if (error.response) {
-          console.error("Error logging in:", error.response.data.message);
+          setErrorMessage(error.response.data.message);
         } else {
           console.error("Network error:", error.message);
         }
@@ -156,6 +159,8 @@ const Auth = () => {
                 {mode == "register" ? <p>Create account</p> : <p>Sign in</p>}
               </button>
             </div>
+
+            <p className="text-center text-red-500">{errorMessage}</p>
           </form>
 
           <p className="mt-10 text-center text-sm text-gray-500">
@@ -169,11 +174,11 @@ const Auth = () => {
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
               {mode == "register" ? (
-                <Link to="/auth/signin">
+                <Link to="/auth/signin" onClick={() => setErrorMessage("")}>
                   <p>Sign in</p>
                 </Link>
               ) : (
-                <Link to="/auth/register">
+                <Link to="/auth/register" onClick={() => setErrorMessage("")}>
                   <p>Register</p>
                 </Link>
               )}
