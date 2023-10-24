@@ -24,38 +24,58 @@ const Auth = () => {
 
   const handleAuthentication = async (e: any) => {
     e.preventDefault();
-    try {
-      const response = await axios.post(
-        "https://localhost:443/api/auth/register",
-        userInput,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
+    if (mode === "register") {
+      try {
+        const response = await axios.post(
+          "https://localhost:443/api/auth/register",
+          userInput,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (response.status === 201) {
+          // Registration was successful
+          console.log("User registered successfully");
         }
-      );
-
-      console.log(response);
-
-      if (response.status === 200) {
-        // Registration was successful
-        console.log("User registered successfully");
-      } else if (response.status === 400) {
-        // User registration failed due to duplicate username or other issues
-        const data = response.data;
-        console.error(data.message);
-      } else {
-        // Handle other response status codes (e.g., 500 for server error)
-        console.error("Registration failed");
+      } catch (error: any) {
+        // Handle any network or other errors
+        if (error.response) {
+          console.error("Error registering user:", error.response.data.message);
+        } else {
+          console.error("Network error:", error.message);
+        }
       }
-    } catch (error) {
-      // Handle any network or other errors, e.g., show an error message to the user
-      console.error("Error registering user:", error);
+    } else {
+      try {
+        const response = await axios.post(
+          "https://localhost:443/api/auth/login",
+          userInput,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (response.status === 200) {
+          // Registration was successful
+          console.log("User signed in successfully");
+        }
+      } catch (error: any) {
+        // Handle any network or other errors
+        if (error.response) {
+          console.error("Error logging in:", error.response.data.message);
+        } else {
+          console.error("Network error:", error.message);
+        }
+      }
     }
   };
-
-  const handleLogin = () => {};
 
   return (
     <body className="flex flex-col bg-[#282454] h-screen">
