@@ -22,43 +22,21 @@ passport.use(
         "SELECT * FROM users WHERE username = $1",
         [username]
       );
-      if (user) {
-        return done(null, false, { message: "Username already taken" });
+
+      // User not found in DB
+      if (!user) {
+        return done(null, false, { message: "User not found." });
       }
 
-      // Generate a random salt
-      const salt = crypto.randomBytes(16);
+      // Check if the passwords match
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) {
+        return done(null, false, { message: "Incorrect password." });
+      }
 
-      // Use the KDF to derive the key pair
-      const keyMaterial = crypto.pbkdf2Sync(
-        password,
-        salt,
-        100000,
-        64,
-        "sha512"
-      );
-
-      // Separate the key material into the public and private key parts
-      const publicKey = keyMaterial.slice(0, 32);
-      const privateKey = keyMaterial.slice(32);
-
-      // Convert to base64 for easier storage
-      const saltBase64 = salt.toString("base64");
-      const publicKeyBase64 = publicKey.toString("base64");
-      const privateKeyBase64 = privateKey.toString("base64");
-
-      // Salt + Hash password using bcrypt
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      // Insert new user into the database, store the derived key as the public key
-      const newUser = await db.one(
-        "INSERT INTO users (username, password, public_key, salt) VALUES ($1, $2, $3, $4) RETURNING *",
-        [username, hashedPassword, publicKeyBase64, saltBase64]
-      );
-
-      return done(null, newUser);
-    } catch (error) {
-      return done(error);
+      return done(null, user);
+    } catch (err) {
+      return done(err);
     }
   })
 );
@@ -77,23 +55,95 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-// Route: POST api/auth/register
-// Desc: Register a new user
+// Middleware to protect secure routes
+const isAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(401).json({ message: "Unauthorized" });
+};
+
+// Route: POST api/auth/login
+// Desc: Login as existing user
 // Access: Public
-router.post("/auth/register", (req, res, next) => {
+router.post("/auth/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     }
     if (!user) {
-      return res.status(400).json({ message: info.message });
+      return res.status(401).json({ message: info.message });
     }
-    return res.status(200).json({ message: "User registered successfully" });
-  })(req, res, next); // Call it as middleware with (req, res, next)
+    req.logIn(user, (loginErr) => {
+      if (loginErr) {
+        return res.status(500).json({ error: loginErr.message });
+      }
+      return res.status(200).json({ message: "User logged in successfully" });
+    });
+  })(req, res, next);
 });
 
-// Route: POST api/auth/login
-// Desc: Login as existing user
+// Route: POST api/auth/logout
+// Desc: Logout the current user
+// Access: Secure
+router.post("/auth/logout", isAuthenticated, (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      // Handle any errors that occur during logout
+      return res.status(500).json({ error: "Failed to log out" });
+    }
+
+    // Successful logout
+    return res.status(200).json({ message: "User logged out successfully" });
+  });
+});
+
+// Route: POST api/auth/register
+// Desc: Register a new user
 // Access: Public
+router.post("/auth/register", async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Check if the user already exists
+    const existingUser = await db.oneOrNone(
+      "SELECT * FROM users WHERE username = $1",
+      [username]
+    );
+    if (existingUser) {
+      return res.status(400).json({ message: "Username already taken." });
+    }
+
+    // Generate a random salt
+    const salt = crypto.randomBytes(16);
+
+    // Use the KDF to derive the key pair
+    const keyMaterial = crypto.pbkdf2Sync(password, salt, 100000, 64, "sha512");
+
+    // Separate the key material into the public and private key parts
+    const publicKey = keyMaterial.slice(0, 32);
+    const privateKey = keyMaterial.slice(32);
+
+    // Convert to base64 for easier storage
+    const saltBase64 = salt.toString("base64");
+    const publicKeyBase64 = publicKey.toString("base64");
+    const privateKeyBase64 = privateKey.toString("base64");
+
+    // Salt + Hash password using bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Insert new user into the database, store the derived key as the public key
+    await db.one(
+      "INSERT INTO users (username, password, public_key, salt) VALUES ($1, $2, $3, $4) RETURNING *",
+      [username, hashedPassword, publicKeyBase64, saltBase64]
+    );
+
+    return res.status(201).json({
+      message: "User registered successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({ error: "Registration failed." });
+  }
+});
 
 module.exports = router;
