@@ -1,11 +1,16 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../components/AuthContext";
 import Header from "../components/Header";
 import axios from "axios";
 
 const Auth = () => {
   let modeParam = useParams();
   const mode = modeParam.mode;
+
+  const navigate = useNavigate();
+
+  const { authState, login } = useAuth(); // Get login method
 
   const [userInput, setUserInput] = useState({
     username: "",
@@ -43,7 +48,7 @@ const Auth = () => {
         if (response.status === 201) {
           // Registration was successful
           alert("User registered successfully");
-          window.location.href = "/auth/login";
+          navigate("/auth/login"); // Use navigate to redirect
         }
       } catch (error: any) {
         // Handle any network or other errors
@@ -69,7 +74,9 @@ const Auth = () => {
         if (response.status === 200) {
           // Registration was successful
           alert("Signed in!");
-          window.location.href = "/messages";
+          login();
+          console.log(authState);
+          navigate("/messages"); // Use navigate to redirect
         }
       } catch (error: any) {
         // Handle any network or other errors
