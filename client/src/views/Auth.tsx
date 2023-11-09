@@ -75,7 +75,6 @@ const Auth = () => {
           // Registration was successful
           alert("Signed in!");
           login();
-          console.log(authState);
           navigate("/messages"); // Use navigate to redirect
         }
       } catch (error: any) {
