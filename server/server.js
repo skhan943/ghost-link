@@ -17,8 +17,8 @@ app.use("/api", routes);
 
 // Self-signed HTTPS certificate ( because this is just a personal project :P )
 const options = {
-  key: fs.readFileSync("key.pem"),
-  cert: fs.readFileSync("cert.pem"),
+  key: fs.readFileSync("./cert/localhost.key"),
+  cert: fs.readFileSync("./cert/localhost.crt"),
 };
 
 // Start the HTTPS server
