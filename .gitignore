@@ -129,6 +129,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-server/cert.pem
-server/key.pem
-server/csr.pem
+server/cert
