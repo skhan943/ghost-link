@@ -14,6 +14,15 @@ router.get("/test", (req, res) => res.send("Test Route!"));
 // Middleware to protect secure routes
 const isAuthenticated = (req, res, next) => {};
 
+// Password validation function
+const isStrongPassword = (password) => {
+  // Minimum length: 15, Maximum length: 20
+  // At least one uppercase letter, one lowercase letter, one number, and one special character
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{15,30}$/;
+  return passwordRegex.test(password);
+};
+
 // Route: POST api/auth/register
 // Desc: Register a new user
 // Access: Public
@@ -28,6 +37,11 @@ router.post("/auth/register", async (req, res) => {
     );
     if (existingUser) {
       return res.status(400).json({ message: "Username already taken." });
+    }
+
+    // Check if the user entered a strong password
+    if (!isStrongPassword(password)) {
+      return res.status(400).json({ message: "Password not valid." });
     }
 
     // Generate a random salt
@@ -55,6 +69,7 @@ router.post("/auth/register", async (req, res) => {
     );
 
     // Create JWT (expires in 3 days)
+    // Secret is exposed here on github, of course this would never be shown in a prod environment
     token = jwt.sign({ username }, "e%RP-So%#0Qjrp$", {
       expiresIn: 259200,
     });
@@ -62,6 +77,7 @@ router.post("/auth/register", async (req, res) => {
     // Assign cookie
     res.cookie("jwt", token, {
       httpOnly: true,
+      secure: true,
       sameSite: "strict", // Prevent CSRF attacks
       maxAge: 259200,
     });
