@@ -1,6 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 const db = require("./db");
 
 const router = express.Router();
@@ -52,6 +53,18 @@ router.post("/auth/register", async (req, res) => {
       "INSERT INTO users (username, password, public_key, salt) VALUES ($1, $2, $3, $4) RETURNING *",
       [username, hashedPassword, publicKeyBase64, saltBase64]
     );
+
+    // Create JWT (expires in 3 days)
+    token = jwt.sign({ username }, "e%RP-So%#0Qjrp$", {
+      expiresIn: 259200,
+    });
+
+    // Assign cookie
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      sameSite: "strict", // Prevent CSRF attacks
+      maxAge: 259200,
+    });
 
     return res.status(201).json({
       message: "User registered successfully",
