@@ -18,7 +18,7 @@ const isAuthenticated = (req, res, next) => {
   // Check JWT exists and is verified
   if (token) {
     // Secret is exposed here on github, would obviously never be revealed in a production environment
-    jwt.verify(token, "e%RP-So%#0Qjrp$", (err, decodedToken) => {
+    jwt.verify(token, "e%RP-So%#0Qjrp$", async (err, decodedToken) => {
       if (err) {
         console.error(err);
         return res.status(500).json({ message: "Authorization Error." });
@@ -32,6 +32,9 @@ const isAuthenticated = (req, res, next) => {
 
 // Private key to be used on server
 let privKey = "";
+
+// Current user object
+let currentUser = {};
 
 // Password validation function
 const isStrongPassword = (password) => {
@@ -139,6 +142,8 @@ router.post("/auth/login", async (req, res, next) => {
       maxAge: 259200,
     });
 
+    currentUser = existingUser;
+
     salt = atob(existingUser.salt);
     privKey = crypto.pbkdf2Sync(password, salt, 100000, 64, "sha512").slice(32);
 
@@ -153,11 +158,9 @@ router.post("/auth/login", async (req, res, next) => {
 // Access: Secure
 router.get("/auth/logout", isAuthenticated, (req, res) => {
   res.cookie("jwt", "", { maxAge: 1 });
+  currentUser = {};
+  privKey = "";
   return res.status(200).json({ message: "Signed out successfully!" });
 });
-
-// Route: GET api/secure/user-info
-// Desc: GET the current user
-// Access: Secure
 
 module.exports = router;
