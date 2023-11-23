@@ -3,6 +3,7 @@ const https = require("https");
 const fs = require("fs");
 const routes = require("./routes");
 const cors = require("cors");
+const cookies = require("cookie-parser");
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(cors({ origin: "https://localhost:5173", credentials: true }));
 
 app.use(express.json()); // Body parser for JSON
 app.use(express.urlencoded({ extended: true })); // Body parser for URL-encoded data
+app.use(cookies());
 
 // Configure routes
 app.use("/api", routes);

@@ -13,13 +13,9 @@ const Messages = () => {
   const handleLogout = async (e: any) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
+      const response = await axios.get(
         "https://localhost:443/api/auth/logout",
-        {},
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
           withCredentials: true,
         }
       );

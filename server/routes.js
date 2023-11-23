@@ -14,6 +14,7 @@ router.get("/test", (req, res) => res.send("Test Route!"));
 // Middleware to protect secure routes
 const isAuthenticated = (req, res, next) => {
   const token = req.cookies.jwt;
+  console.log(token);
 
   // Check JWT exists and is verified
   if (token) {
@@ -151,7 +152,10 @@ router.post("/auth/login", async (req, res, next) => {
 // Route: POST api/auth/logout
 // Desc: Logout the current user
 // Access: Secure
-router.post("/auth/logout", isAuthenticated, (req, res) => {});
+router.get("/auth/logout", isAuthenticated, (req, res) => {
+  res.cookie("jwt", "", { maxAge: 1 });
+  return res.status(200).json({ message: "Signed out successfully!" });
+});
 
 // Route: GET api/secure/user-info
 // Desc: GET the current user
