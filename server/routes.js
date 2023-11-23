@@ -14,7 +14,6 @@ router.get("/test", (req, res) => res.send("Test Route!"));
 // Middleware to protect secure routes
 const isAuthenticated = (req, res, next) => {
   const token = req.cookies.jwt;
-  console.log(token);
 
   // Check JWT exists and is verified
   if (token) {
