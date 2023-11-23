@@ -12,7 +12,23 @@ const router = express.Router();
 router.get("/test", (req, res) => res.send("Test Route!"));
 
 // Middleware to protect secure routes
-const isAuthenticated = (req, res, next) => {};
+const isAuthenticated = (req, res, next) => {
+  const token = req.cookies.jwt;
+
+  // Check JWT exists and is verified
+  if (token) {
+    // Secret is exposed here on github, would obviously never be revealed in a production environment
+    jwt.verify(token, "e%RP-So%#0Qjrp$", (err, decodedToken) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Authorization Error." });
+      }
+      next();
+    });
+  } else {
+    return res.status(403).json({ message: "Not authorized." });
+  }
+};
 
 // Private key to be used on server
 let privKey = "";

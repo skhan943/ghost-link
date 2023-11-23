@@ -48,6 +48,7 @@ const Auth = () => {
         if (response.status === 201) {
           // Registration was successful
           alert("User registered successfully");
+          login();
           navigate("/messages"); // Use navigate to redirect
         }
       } catch (error: any) {
