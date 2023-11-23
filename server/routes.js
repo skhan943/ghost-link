@@ -14,6 +14,9 @@ router.get("/test", (req, res) => res.send("Test Route!"));
 // Middleware to protect secure routes
 const isAuthenticated = (req, res, next) => {};
 
+// Private key to be used on server
+let privKey = "";
+
 // Password validation function
 const isStrongPassword = (password) => {
   // Minimum length: 15, Maximum length: 20
@@ -52,12 +55,11 @@ router.post("/auth/register", async (req, res) => {
 
     // Separate the key material into the public and private key parts
     const publicKey = keyMaterial.slice(0, 32);
-    const privateKey = keyMaterial.slice(32);
+    privKey = keyMaterial.slice(32);
 
     // Convert to base64 for easier storage
     const saltBase64 = salt.toString("base64");
     const publicKeyBase64 = publicKey.toString("base64");
-    const privateKeyBase64 = privateKey.toString("base64");
 
     // Salt + Hash password using bcrypt
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -93,7 +95,42 @@ router.post("/auth/register", async (req, res) => {
 // Route: POST api/auth/login
 // Desc: Login as existing user
 // Access: Public
-router.post("/auth/login", (req, res, next) => {});
+router.post("/auth/login", async (req, res, next) => {
+  const { username, password } = req.body;
+
+  // Check if the user exists
+  const existingUser = await db.oneOrNone(
+    "SELECT * FROM users WHERE username = $1",
+    [username]
+  );
+  if (!existingUser) {
+    return res.status(400).json({ message: "Username not found." });
+  }
+
+  const auth = await bcrypt.compare(password, existingUser.password);
+  if (auth) {
+    // Create JWT (expires in 3 days)
+    // Secret is exposed here on github, of course this would never be shown in a prod environment
+    token = jwt.sign({ username }, "e%RP-So%#0Qjrp$", {
+      expiresIn: 259200,
+    });
+
+    // Assign cookie
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict", // Prevent CSRF attacks
+      maxAge: 259200,
+    });
+
+    salt = atob(existingUser.salt);
+    privKey = crypto.pbkdf2Sync(password, salt, 100000, 64, "sha512").slice(32);
+
+    return res.status(200).json({ message: "Signed in successfully!" });
+  } else {
+    return res.status(400).json({ message: "Incorrect password." });
+  }
+});
 
 // Route: POST api/auth/logout
 // Desc: Logout the current user
