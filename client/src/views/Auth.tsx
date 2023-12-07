@@ -10,7 +10,7 @@ const Auth = () => {
 
   const navigate = useNavigate();
 
-  const { authState, login } = useAuth(); // Get login method
+  const { login } = useAuth(); // Get login method
 
   const [userInput, setUserInput] = useState({
     username: "",
