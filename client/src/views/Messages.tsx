@@ -1,14 +1,12 @@
 import Header from "../components/Header";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 
 const Messages = () => {
   const navigate = useNavigate();
 
-  const { authState, logout } = useAuth(); // Get login method
-
-  console.log(authState);
+  const { logout } = useAuth(); // Get logout method
 
   const handleLogout = async (e: any) => {
     e.preventDefault();
@@ -35,6 +33,7 @@ const Messages = () => {
       <body className="flex flex-col bg-[#282454] h-screen">
         <Header linkTo="/messages"></Header>
         <button onClick={handleLogout}>Logout</button>
+        <Link to={"/delete"}>Delete</Link>
       </body>
     </>
   );
