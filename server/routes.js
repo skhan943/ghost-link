@@ -153,7 +153,7 @@ router.post("/auth/login", async (req, res, next) => {
   }
 });
 
-// Route: POST api/auth/logout
+// Route: GET api/auth/logout
 // Desc: Logout the current user
 // Access: Secure
 router.get("/auth/logout", isAuthenticated, (req, res) => {
@@ -161,6 +161,29 @@ router.get("/auth/logout", isAuthenticated, (req, res) => {
   currentUser = {};
   privKey = "";
   return res.status(200).json({ message: "Signed out successfully!" });
+});
+
+// Route: DELETE api/delete
+// Desc: Delete the current user
+// Access: Secure
+router.delete("/delete", isAuthenticated, async (req, res) => {
+  try {
+    // Get the current user's ID from the current user
+    const userId = currentUser.user_id;
+
+    // Delete the user from the database
+    await db.none("DELETE FROM users WHERE user_id = $1", [userId]);
+
+    // Logout the user
+    res.cookie("jwt", "", { maxAge: 1 });
+    currentUser = {};
+    privKey = "";
+
+    return res.status(200).json({ message: "User deleted successfully!" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Failed to delete user." });
+  }
 });
 
 module.exports = router;
