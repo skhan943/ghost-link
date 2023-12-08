@@ -29,8 +29,28 @@ const DeleteAccount = () => {
     <>
       <body className="flex flex-col bg-[#282454] h-screen">
         <Header linkTo="/messages"></Header>
-        <Link to={"/messages"}>no</Link>
-        <button onClick={handleDelete}>yes</button>
+        <div className="h-screen flex justify-center items-center font-montserrat">
+          <div className="bg-[#443F84] p-12 rounded-lg shadow-md text-center">
+            <p className="text-lg mb-4 text-white">
+              Are you sure you want to delete your account?
+            </p>
+            <p className="text-lg mb-4 text-white">All data will be lost.</p>
+            <div className="flex justify-around">
+              <Link
+                to="/messages"
+                className="bg-indigo-700 text-white px-4 py-2 rounded-md mr-2"
+              >
+                No, go back!
+              </Link>
+              <button
+                onClick={handleDelete}
+                className="bg-red-500 text-white px-4 py-2 rounded-md"
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
       </body>
     </>
   );
