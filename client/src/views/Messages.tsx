@@ -33,7 +33,7 @@ const Messages = () => {
       <body className="flex flex-col bg-[#282454] h-screen">
         <Header linkTo="/messages"></Header>
         <button onClick={handleLogout}>Logout</button>
-        <Link to={"/delete"}>Delete</Link>
+        <Link to={"/self-destruct"}>Delete</Link>
       </body>
     </>
   );
