@@ -186,4 +186,149 @@ router.delete("/delete", isAuthenticated, async (req, res) => {
   }
 });
 
+// Route: POST api/chat/create
+// Desc: Create a new chat given username and message text
+// Access: Secure
+router.post("/chat/create", isAuthenticated, async (req, res) => {
+  try {
+    const { username, messageText } = req.body;
+
+    // Find the user_id for the given username
+    const user = await db.oneOrNone(
+      "SELECT user_id FROM users WHERE username = $1",
+      [username]
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Create a new chat with the default chat name as the username
+    const chat = await db.one(
+      "INSERT INTO chat (chat_name) VALUES ($1) RETURNING chat_id",
+      [username]
+    );
+
+    // Add the current user and the user associated with the given username to the UserChat table
+    await db.none(
+      "INSERT INTO userchat (user_id, chat_id) VALUES ($1, $2), ($3, $2)",
+      [currentUser.user_id, chat.chat_id, user.user_id]
+    );
+
+    // Create a new message for the chat
+    await db.none(
+      "INSERT INTO messages (user_id, chat_id, text) VALUES ($1, $2, $3)",
+      [currentUser.user_id, chat.chat_id, messageText]
+    );
+
+    return res.status(201).json({ message: "Chat created successfully." });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Failed to create chat." });
+  }
+});
+
+// Route: GET api/chat/all
+// Desc: Get all the chats of a user given the user_id
+// Access: Secure
+router.get("/chat/all", isAuthenticated, async (req, res) => {
+  try {
+    // Get all chats for the current user
+    const userChats = await db.any(
+      "SELECT c.chat_id, c.chat_name FROM chat c INNER JOIN userchat uc ON c.chat_id = uc.chat_id WHERE uc.user_id = $1",
+      [currentUser.user_id]
+    );
+
+    return res.status(200).json({ chats: userChats });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Failed to retrieve chats." });
+  }
+});
+
+// Route: GET api/chat/:id
+// Desc: Get all the messages of a specific chat
+// Access: Secure
+router.get("/chat/:id", isAuthenticated, async (req, res) => {
+  try {
+    const chatId = req.params.id;
+
+    // Check if the current user is a member of the specified chat
+    const isMember = await db.oneOrNone(
+      "SELECT * FROM userchat WHERE user_id = $1 AND chat_id = $2",
+      [currentUser.user_id, chatId]
+    );
+
+    if (!isMember) {
+      return res
+        .status(403)
+        .json({ message: "Not authorized to view this chat." });
+    }
+
+    // Get all messages for the specified chat
+    const messages = await db.any(
+      "SELECT m.message_id, m.text, m.timestamp, u.username FROM messages m INNER JOIN users u ON m.user_id = u.user_id WHERE m.chat_id = $1 ORDER BY m.timestamp",
+      [chatId]
+    );
+
+    return res.status(200).json({ messages });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Failed to retrieve messages." });
+  }
+});
+
+// Route: DELETE api/chat/delete
+// Desc: Delete a chat given chat_id
+// Access: Secure
+router.delete("/chat/delete/:id", isAuthenticated, async (req, res) => {
+  try {
+    const chatId = req.params.id;
+
+    // Delete the chat and related entries from UserChat and Messages tables
+    await db.tx(async (t) => {
+      await t.none("DELETE FROM userchat WHERE chat_id = $1", [chatId]);
+      await t.none("DELETE FROM messages WHERE chat_id = $1", [chatId]);
+      await t.none("DELETE FROM chat WHERE chat_id = $1", [chatId]);
+    });
+
+    return res.status(200).json({ message: "Chat deleted successfully." });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Failed to delete chat." });
+  }
+});
+
+// Route: POST api/messages/create
+// Desc: Create a new message given chat_id and message text
+// Access: Secure
+router.post("/message/create", isAuthenticated, async (req, res) => {
+  try {
+    const { chatId, messageText } = req.body;
+
+    // Check if the current user is a member of the specified chat
+    const isMember = await db.oneOrNone(
+      "SELECT * FROM userchat WHERE user_id = $1 AND chat_id = $2",
+      [currentUser.user_id, chatId]
+    );
+
+    if (!isMember) {
+      return res
+        .status(403)
+        .json({ message: "Not authorized to send messages to this chat." });
+    }
+
+    // Create a new message
+    await db.none(
+      "INSERT INTO messages (user_id, chat_id, text) VALUES ($1, $2, $3)",
+      [currentUser.user_id, chatId, messageText]
+    );
+
+    return res.status(201).json({ message: "Message sent successfully." });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Failed to send message." });
+  }
+});
+
 module.exports = router;
