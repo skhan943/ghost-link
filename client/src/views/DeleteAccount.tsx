@@ -8,6 +8,7 @@ const DeleteAccount = () => {
 
   const { logout } = useAuth(); // Get logout method
 
+  // Function to handle deleting account
   const handleDelete = async (e: any) => {
     e.preventDefault();
     try {
