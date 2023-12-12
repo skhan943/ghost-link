@@ -8,6 +8,7 @@ const Messages = () => {
 
   const { logout } = useAuth(); // Get logout method
 
+  // Function to handle logging out
   const handleLogout = async (e: any) => {
     e.preventDefault();
     try {
