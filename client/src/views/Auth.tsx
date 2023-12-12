@@ -12,13 +12,16 @@ const Auth = () => {
 
   const { login } = useAuth(); // Get login method
 
+  // Variable to store user's form input
   const [userInput, setUserInput] = useState({
     username: "",
     password: "",
   });
 
+  // Vairbale to store error message which will be displayed on screen
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Function to handle change in form values
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setUserInput((prevState) => {
@@ -29,6 +32,7 @@ const Auth = () => {
     });
   };
 
+  // Handles either registration or loggging in, dependant on mode
   const handleAuthentication = async (e: any) => {
     e.preventDefault();
     setErrorMessage("");
