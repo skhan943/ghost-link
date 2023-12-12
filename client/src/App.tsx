@@ -9,6 +9,7 @@ import { useAuth } from "./components/AuthContext";
 function App() {
   const { authState } = useAuth();
 
+  // Routes are protected, unauthorized users redirected to login screen
   return (
     <Routes>
       <Route path="/" element={<Home />} />
