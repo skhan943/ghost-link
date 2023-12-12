@@ -1,7 +1,5 @@
 import { createContext, useContext, useReducer, ReactNode } from "react";
 
-// Defining Typescript types
-
 // Represents the current state of authentication
 type AuthState = {
   isAuthenticated: boolean;
