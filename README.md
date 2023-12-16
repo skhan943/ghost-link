@@ -1,1 +1,2 @@
-# ghost-link
+# GhostLink
+Exploring Encryption, Privacy, and Secure Messaging
