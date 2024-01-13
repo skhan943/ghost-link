@@ -54,3 +54,16 @@ GhostLink utilizes a modern tech stack to ensure a secure and efficient messagin
 **JSON Web Tokens (JWT)**: GhostLink incorporates JWT for user authentication. JWTs enable secure transmission of user identity information between the client and server.
 
 These technologies collectively form a powerful stack, allowing GhostLink to deliver a secure, responsive, and feature-rich messaging experience.
+
+### Gallery
+![image](https://github.com/skhan943/ghost-link/assets/72502583/659ea868-f58c-4304-908c-53e0eded7f5f)
+
+![image](https://github.com/skhan943/ghost-link/assets/72502583/9b98a25b-4555-4609-a14d-f07af886c456)
+
+![image](https://github.com/skhan943/ghost-link/assets/72502583/ed630ca3-ca75-41a7-917b-4e312361d702)
+
+#### Messages Route WIP
+![image](https://github.com/skhan943/ghost-link/assets/72502583/348353c6-2081-4292-8457-d5b0a9fba827)
+
+
+
