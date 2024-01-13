@@ -63,7 +63,8 @@ These technologies collectively form a powerful stack, allowing GhostLink to del
 ![image](https://github.com/skhan943/ghost-link/assets/72502583/ed630ca3-ca75-41a7-917b-4e312361d702)
 
 #### Messages Route WIP
-![image](https://github.com/skhan943/ghost-link/assets/72502583/348353c6-2081-4292-8457-d5b0a9fba827)
+![image](https://github.com/skhan943/ghost-link/assets/72502583/368ee5e6-ee8d-49ab-8e2c-9d612d19ff2c)
+
 
 
 
