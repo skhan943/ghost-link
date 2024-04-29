@@ -12,7 +12,7 @@ GhostLink aims to maximize privacy and security in a couple of different ways. L
 2. A public-private key pair is derived from their passwords.
 3. Their public keys are stored on the server.
 
-![Untitled drawing](https://github.com/skhan943/ghost-link/assets/72502583/d7a31fa1-8b47-446a-9860-befdd8ab90bf)
+![Untitled drawing (1)](https://github.com/skhan943/ghost-link/assets/72502583/1813cab8-17ca-49a3-9a6f-96331fe9bac6)
 
 When Alice messages Bob, here is what goes on in the background:
 1. Alice will send a request to the server for Bob's public key using his username. If the server finds Bob, it will respond to Alice's request.
