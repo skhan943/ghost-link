@@ -3,10 +3,10 @@ Exploring Encryption, Privacy, and Secure Messaging
 
 ![image](https://github.com/skhan943/ghost-link/assets/72502583/243dfa69-adfc-4661-b2ff-2a50eab33721)
 
-### Background
+## Background
 In today's interconnected world, the need for secure and private communication is more pressing than ever. Existing communication methods often lack sufficient safeguards, leaving them vulnerable to malicious actors. With GhostLink, my objective was to explore the world of cryptography, work with new tools like Vite and PostgreSQL, and try my hand at building a real-time messaging app. This project allowed me to dive into the practicalities of secure communication while gaining hands-on experience with some new technologies.
 
-### Design
+## Design
 GhostLink aims to maximize privacy and security in a couple of different ways. Let's say Alice and Bob are two privacy-conscious friends who want to message each other. They decide to use an exciting new service called GhostLink.
 1. Alice and Bob sign up. During the registration process, they must enter a username (used to identify users) and a password (with strict requirements).
 2. A public-private key pair is derived from their passwords.
@@ -29,7 +29,7 @@ There are many advantages to this design:
 - Private key is never stored anywhere, always derived from password, can't be stolen.
 - Messages permenantly deleted after 3 days, less data exposed if account is compromised.
 
-### What I learned
+## What I learned
 GhostLink has been an invaluable learning experience, exposing me to a wide range of concepts and technologies. Throughout the development process, I gained insights into various aspects of software development and security, including cryptography principles for implementing end-to-end encryption, the crucial role of SSL certificates in securing data in transit, and the implementation of robust user authentication mechanisms. 
 
 The project also provided practical experience in UI design using React and Vite, along with the simplicity of Tailwind CSS for styling. Learning to protect routes and control access based on user authentication status further enhanced the overall security of the messaging app. Additionally, working with PostgreSQL for data storage, especially when containerized with Docker, offered insights into database management and deployment consistency.
@@ -38,7 +38,7 @@ The integration of JSON Web Tokens (JWT) for user authentication, allowing for t
 
 Building a real-time messaging app using Node.js and Express.js expanded my understanding of scalable, responsive systems and the challenges associated with concurrent connections. While it's challenging to list all the lessons learned, GhostLink has been a comprehensive exploration of secure application development.
 
-### Technologies
+## Technologies
 GhostLink utilizes a modern tech stack to ensure a secure and efficient messaging experience, I had a lot of fun working with the following:
 
 **React with Vite**: The frontend is built using React, coupled with Vite for fast and efficient development. Vite provides a seamless development experience and I really liked it as an alternative to create-react-app
@@ -55,7 +55,7 @@ GhostLink utilizes a modern tech stack to ensure a secure and efficient messagin
 
 These technologies collectively form a powerful stack, allowing GhostLink to deliver a secure, responsive, and feature-rich messaging experience.
 
-### Gallery
+## Gallery
 ![image](https://github.com/skhan943/ghost-link/assets/72502583/659ea868-f58c-4304-908c-53e0eded7f5f)
 
 ![image](https://github.com/skhan943/ghost-link/assets/72502583/9b98a25b-4555-4609-a14d-f07af886c456)
